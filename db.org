@@ -190,9 +190,36 @@ Két alapvetően különböző megvalósítás lehetséges:
 2. indexrekordot rendelünk adatrekordok egy csoportjához, tipikusan az egy
 blokkban levőkhöz. (ritka index)
 
-* Ritka index
+* Ritka index, B*-fák 
+** Ritka index
 Ebben az esetben indexrekordot redot az adatrekordok egy csoportjához
 rendeljül. Ez hasonlít a szótárban található első és utolsó szó megjelölése az
 egyes oldalak tetején.
 
-** Keresés
+*** Keresés
+ Keresés során először az index állományon bináris keresést alkalmazunk a
+ keresett kulcsra. Ha megtaláljuk, akkor megkapjuk,hogy a keresett rekord melyik
+ blokkban található. Ezek után a blokkon belül lineáris keresést alkalmazunk
+ (vagy ha rendezett akkor bináris keresést).
+
+*** Beszúrás
+ Először meg kell keressük azt a blokkot, amelyben a rekodnak lennie kellene, ha
+ az állományban lenne. Ha ebben a blokkban van elég hely, akkor a rekordot
+ beírjuk a blokkba. Ha nincs , akkor helyet kell csinálnuk neki. Erre egy
+ lehetőség lehet az, ha létrehozunk egy új blokkot és a korbábban megtalát blokk
+ rekorjait megfelezzük az új blokkal. Ez után frissítenünk kell az index
+ struktúrát is az blokkokban található kulcsoknak megfelelően.
+
+*** Törlés
+Először megkeressük azt a blokkot,amelyik a rekordot tartalmazza. Ha ebben a
+blokkban nem a legkisebb kulcsot akarjuk törölni,akkor ezt egyszerűen
+elvégezhetjük, a keletkező lyukat pedig mozgatással megszüntethetjük. Ha a
+legkisebb kulcsot töröltük a blokkban akkor az indexállományt is firssíteni
+kell.
+*** Módosítás
+A módosítás egyszerű, ha nem érint kulcsot. Ekkor meg kell keresni a szóban
+forgó rekordot, elvégezni a módosítást, majd az érintett adatblokkot visszaírni a
+háttértárra.
+Ha a módosítás kulcsmezőt is érint, akkor egy törlést követő beszúrás valósíthatja
+meg egy rekord módosítását.
+** B*-fák
