@@ -1,0 +1,198 @@
+#+TITLE: Adatbázisok tételek
+#+AUTHOR: Toldi Balázs Ádám
+
+* Adat, információ, tudás. Metaadatok. Strukturált, szemistrukturált és nem strukturált adatok
+** Adat 
+A körülöttünk lévő világ egy része,ami értelmezhető ugyan,de nem értelmezzük.
+** Információ 
+Az adathoz redelünk egy értelmet,egy jelentést.
+** Tudás
+Kontextusba helyezett információ.
+** Metaadat
+Adat, az adatról. Segéd adatok.
+*** Szerkezeti(Strukturális) metaadat
+pl. Hol található egy file fizikailag
+*** Szemantikus(Üzleti információs) metaadat
+Hogyan kell értelmezni egy adatot.
+*** Üzemeltetési metaadat
+Mi történt az adatokkal. 
+pl. mikor lett módosítva.
+** Struktúrált adat
+ Olyan adat,amire struktúrális $\text{metaadat} << \text{adat}$ .
+*** Semi-struktúrált adat
+Olyan adat,amire struktúrális $\text{metaadat} \approx \text{adat}$ .
+*** Nem struktúrált adat
+Olyan adat,amihez egyáltalán nem értelmezünk.
+* Adatbázis-kezelő fogalma, feladatai, felépítése, használói
+** Adatbázis kezelő fogalma
+Az adatbáziskezelő, olyan hardware- softwarerendszer, amelyet 3 fő tulajdonság
+jellemez:
+- nagy adatmennyiség
+- gazdag struktúra
+- hosszú életciklus
+** Feladatai
+*** Adatok sémájának meghatározása
+A felhasználónak meg kell tudnia határoznia az adatbázis sémáját,azaz az adatok
+logikai rendjét. Ezt tipikusan egy adatdeviníciós nyelven teheti meg(data
+definition language,DDL). Ezeket az ún. technikai metaadatokat egy speciális
+védett helyen kerülnek eltárolásra
+*** Adatok tárolása
+A séma meghatározása után felvehetünk adatadokat az adatbázisba.
+*** Hozzáférés az adatokhoz
+A felhasználónak lehetősége lehet az egyes adatok megkeresésére, módosítására,
+valamint törléásére. Ezt tipikusan egy adatlekérdező és -manipulációs nyelven
+teheti meg(data manipulation language,DML).
+*** Adatbázis-menedzser
+A DBMS központi része az adatbázis-menedzser (database manager), amely a
+lefordított séma alapján kezeli a felhasználói lekérdezéseket
+*** Adatvédelem(privacy)
+Nem minden felhasználó férhet hozzá minden adathoz. A kölönböző felhasználókhoz
+külön jogokat rendelünk. Lehet olyan felhasználó,aki csak a olvasni tudja a
+tárolt adatokat, lehet olyan felhasználó, aki olvasni és módosítani is tudja az
+adatokat,de lehet olyan is,aki egyáltalán nem fér hozzá az adatokhoz.
+*** Adatbiztonság(security)
+Bizonyos adatok, igen nyagy értéket képviselhetnek, és ezért semmi képpen nem
+toleráljuk elvesztésüket,vagy részleges elvesztésüket. Ezért különböző
+eszközöket alkalmazunk az adatok biztonsága érdekében. Pl. naplózás,rednszeres
+mentés,kettőzött állományok elosztott működés, stb.
+*** Integritás
+Fontos,hogy az adabázisban tárolt adatok helyesek legyenek, ne legyenek
+ellentmondások. Ezért ezeket ellenőrizni kell.
+**** Formai ellenőrzés
+Ez viszonyla egyszerú elvégezni. Csak meg kell nézni hogy az adat megfelel-e egy
+elvárt formának. Pl. egy keresztnév nem tartalmaz számokat vagy testmagasság nem
+lehet három és fél méter (domain sértés).
+**** Referenciális integritás
+Számos esetben kell annak a feltételnek teljesülnie, hogy az adatbázisból az egyik
+helyről kiolvasott adatelemnek meg kell egyeznie valamely más helyről kiolvasott
+másik adatelemmel
+**** Strukturális integritás
+Ellenőriznünk kell, hogy nem sérült-e meg valamely feltételezés, amelyre az
+adatbázis szerkezetének megtervezésekor építettünk. Gyakori hiba, az
+egyértelműség megszűnése(pl több feleség). Ide tartoznak az adatbáziskényszerek
+ellenőrzése is.
+*** Szinkronitás
+Fontos,hogy a különböző felhasználók által, egyidőben végzett műveleteknek ne
+legyenek nemkívánatos mellékhatásai. Ezt tanzakciókezeléssel módszereivel oldjuk
+meg. pl. zárak.
+** Felépítése
+A felépítésének leírásához egy rétegmodellt alkalmazunk. A legegyszerűbb
+adatbázis kezelő modelle 3 rétegből áll:
+*** Fizikai adatbázis
+Itt valósul meg az adatok,valamint az adat struktúrák fizikai tárolása.
+*** Fogalmi(logikai) adatbázis
+Ez a való világ egy részének leképezése,egy sajátos modell,ahogyan az adabázis
+tükrözi a valóság egy részét.
+*** Nézetek
+Ez az amit a felhasználók látnak. Az adatbázisban szereplő adatok és metaadatok
+egyes megjelenítései.A nézetekhez tartozó sémákat gyakran külső sémának
+(external schema) is nevezik.
+** Felhasználói
+*** Képzetlen felhasználó (naive user)
+A felhasználók legszélesebb rétege, akik csak bizonyos betanult ismeretekkel
+rendelkeznek a rendszerről.
+*** Alkalmazás programozó
+Az a szakember, aki a (képzetlen) felhasználó által használt programot készíti
+és karbantartja. Ez olyan feladat, amely programozót igényel, de megoldásához
+nem feltétlenül szükséges, hogy az illető belelásson az adatbázis belső
+szerkezetébe is.
+*** Adatbázis adminisztrátor
+Hagyományosan így nevezzük azt a személyt, aki az adatbázis felett
+gyakorlatilag korlátlan jogokkal bír. Kizárólag ő végezhet egyes
+feladatokat,mint pl:
+**** Generélás
+Adatbázisok létrehozása, szerkezetének kialalítása.
+**** Jogosultságok karbantartása
+A hozzáférések jogának naprakészen tartása, módosítása.
+**** Szerkezetmódosítás
+Az adatbázis eredeti szerkezetének 
+**** Mentés-visszaállítás. 
+Célszerű lehet adatbiztonsági okokból időnként vagy bizonyos időközönként
+másolatot készíteni az adatbázisról. Ha az adatbázis megsérül, ez a másolat
+teszi lehetővé a visszaállítást a mentés időpontjának állapotába.
+**** DBMS tervező/programozó (DBMS designer/programmer)
+Tudja, hogyan kell DBMS-t készíteni, ami különösen specializált tudást igényel.
+
+
+* Heap szervezés
+** Általános jellemzői
+Jelentése halmaz, kupac. Ez a legegyszerűbb tárolási megoldás. Legalább annyi
+blokkot használ fel,amennyit a rekordok száma és mérete megkövetel,de nem
+rendelünk hozzás semmilyen segédstruktúrát.
+** Műveletek heap szervezésben
+*** Keresés
+ Mivel nem rendelkezik semmilyen segéd struktúrával ezért lineáris keresést
+ alkalmazunk. Ez általánosan $\frac{\text{blokkok száma}+1}{2}$ blokkműveletet
+ igényel. (Mivel egy keresés nem végezhető el 0 blokkműveletből,ezért kell a $+1$
+ )
+
+*** Törlés
+ Először meg kell keresni a törlendő rekodot,majd a felécben jelezni,hogy a
+ rekord felszabadult. Ezek után a megváltoztatott blokkot vissza kell írni.
+
+*Következményei*:
+ Az előbb felvázolt metódus egy gyakori következménye a szétszódódott
+ lemezterület. Erre megoldást jelenthet a lemezterületek összegyűjtése és
+ egyesítése.
+*** Beszúrás
+Először mindenképpen ellenőrizni kell a rekod egyedidégét,majd szabad
+tárolóhelyet kell találni. Ha nincs, állománybővítés szükséges(adminisztrátor
+feladata).
+*** Módosítás
+Először meg kell keresnünk a blokkot,amiben a keresett rekord található. Majd a
+rekord módosítása után  a blokkot vissza kell írni a háttértárra.
+* Hash-állományok
+
+A hash-címzés során a kesesés kulcsának bitmintájából csonkolás segítségével is
+kinyerhető egy cím, amely alapján a keresett rekord megtalálható.
+
+A legegyserűbb változatában egy ún. hash függvényt használunk,ami egy egyértelmű
+címet ad.Ezzel ugyan sokkal gyorsabb a keresés,mint hagyományos módszerekkel,de
+a háttértárakat ebben a formában igen rosszul használja ki.
+
+Egy gyakori megoldás erre a vödrös hash-elés,ahol az egyes blokkok vödrökbe
+vannak elhelyezve. Keresés során a hash függvénnyel megkaphatjuk,hogy a keresett
+rekord melyik vödörben található.
+** Műveletek vödrös hash szervezésben
+*** Keresés
+Először lefutattjuk a kulcson a hash függvényt. Ez alapján tudjuk,hogy melyik
+vödörben található a keresett rekord. Ezek után a vödörben lényegében lineáris
+keresést alkalmazunk.
+*** Beszúrás
+Előszür a hash függvény alapján megkeressük,hogy melyik vödörbe tartozik a
+rekord,majd megkeressük a rekord kulcsát a vödörben. Ha megtalátuk akkor,
+hibaüzenetet küldünk. Ha nem találtuk meg,akkor az első szabad vagy törölt
+helyre beírjuk. Végül a módosított blokkot visszaírjuk a háttértárra.
+*** Törlés 
+Megkeresés utá a felécben jelezni,hogy a rekord felszabadult. Ezek után a
+megváltoztatott blokkot vissza kell írni.
+*** Módosítás
+Ha nem a kulcs mezőt módosítjuk,akkor az a módosítás a szokott módon történik.
+Ha kulcs mező is módosul akkor a törlés és a beszurás műveletet kell alkalmazni
+egymás után. 
+
+* Indexelt állományok 
+
+Az indexelt szervezés alapgondolata: a keresés kulcsát egy ún. indexállományban
+(kb. katalógus) megismételjük, és a kulcshoz egy mutatót rendelünk, amely a
+tárolt adatrekord helyére mutat.
+
+Az indexállományt mindig rendezve tartjuk. Ha a kulcs numerikus, akkor a
+rendezés triviális. Ha szöveges, akkor lexikografikus rendezést
+alkalmazhatunk. Összetett kulcs (composite key) esetén, vagyis amikor a kulcs
+több mezőből áll, definiálnunk kell a rendezés módját. Általában nincs akadálya,
+hogy több indexállományt is létrehozzunk ugyanazon adatállományhoz,különböző
+(vagy különbözően rendezett) kulcsmezőkkel.Ezért ebben a kontextusban a (keresési) kulcs
+lesz minden, ami szerint egy indexet felépítünk, illetve a keresést végezzük.
+
+Két alapvetően különböző megvalósítás lehetséges:
+1. indexrekordot rendelünk minden egyes adatrekordhoz (sűrű index)
+2. indexrekordot rendelünk adatrekordok egy csoportjához, tipikusan az egy
+blokkban levőkhöz. (ritka index)
+
+* Ritka index
+Ebben az esetben indexrekordot redot az adatrekordok egy csoportjához
+rendeljül. Ez hasonlít a szótárban található első és utolsó szó megjelölése az
+egyes oldalak tetején.
+
+** Keresés
