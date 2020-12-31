@@ -286,8 +286,6 @@ Sűrű indexelés esetén a módosítás viszonylag egyszerű: megkeressük a m�
 rekordot tartalmazó adatblokkot, majd a módosított tartalommal visszaírjuk a
 háttértárra. Ha a módosítás kulcsmezőt is érintett, akkor az indexállományt
 újrarendezzük.
-
-
 * Változó hosszúságú rekordok kezelése
 ** Változó hosszú ságú rekordok oka
 - Egy mező hossza változó
@@ -303,3 +301,53 @@ a mező tényleges tartalma van. Így egy állomány csak egy féle rekordot tar
 Erre több megoldás is létezik:
 - A maximális számú ismétlődésnek elegendő helyet foglalunk le minden rekordnak
 - Mutatók használata
+* Részleges információ alapján történő keresés
+Gyakran megesik, hogy egy rekord több mezéjét is ismerjük és meg akarjuk keresni
+azokat a rekordokat, amelyek ugyanezen értékeket tárolják. A továbbiakban úgy
+vesszük, hogy egyik ismert mező sem kulcs.
+
+** Index felépítése
+Egy lehetőség lehet több (esetleg minden) mezőre egy index felépítése. Ezek után
+minden megadott értékre alapján előállíthatunk rekord halmazokat, majd ezek
+metszetét képezve megkapjuk a kívánt eredményt. Ez nem túl praktikus.
+
+** Particionált(feldarabolt) hash-függvény
+
+Veszünk egy hash függvényt, amely
+\begin{align}
+h(m_1,m_2,\ldots,m_k)=h_1(m_1)*h_2(m_2)*\ldots*h_k(m_k)
+\end{align}
+alakú, ahol az
+$m_i\text{-k}$ a rekord összes $k$ darab, releváns mezőjének az értékeit
+jelentik, $h_i$ az $i\text{-edik}$ mezőre alkalamazott hash függvény komponens,
+a $*$ pedig a konkatonáció (összefűzés) jele.
+
+Az ismert mezők értékei alapján meghatározhatjuk az $N$ hosszúságú bitmintának az
+ismert darabjait. Mindenazon vödröket kell megnézni amelyeknek a sorszáma
+illeszkedik a kapott bitmintára.
+* Több kulcs szerinti keresés támogatása
+Fontos, hogy egy adatbáziskezelő ne csak elsődleges kulcs szerint tudjon
+keresni, hanem egyéb mezők alapján is. Ezeket a mezőket keresési kulcsoknak
+nevezzük.
+
+** Indexelt megoldás
+*** Invertált állomány fogalma
+Azt az indexállományt, amely nem kulcsmezőrea tartalmaz indexeket, invertált
+állománynak nevezzük.
+*** Invertált állomány mutatói
+Az invertált állomány mutatói lehetnek:
+    1. <<elso>>Fizikai mutatók, amelyek pl. mutathatnak
+       1) <<elso.a>>közvetlenül az adatállomány megfelelő blokkja (esetleg rekordja)
+       2) <<elso.b>>az adatállomány elsődleges kulcsa szerinti (sűrű) indexállomány
+           megfelelő rekorjára
+    2. <<masodik>> Logikai mutatók, amelyek az adatállomány valamely kulcsának értékét
+       tartalmazzák
+Az [[elso.a]] esetben az adatállomány rekordjai kötöttek és ráadásul csak egyetlen
+inverált állomány esetén használható.
+
+Az [[elso.b]] esetben egyel több indirekción keresztül elrejtjük a keresett
+rekordot, de az adatrekord megváltoztatásakor csak az érintett mezőhöz (vagy
+mezőkhöz) tartozó invertált állományt kell frissíteni.
+
+A [[masodik]]. lehetőségben az adatállomány rekordjai szabadok lehetnek, viszont nem
+ismerjük a keresett rekord címét.
