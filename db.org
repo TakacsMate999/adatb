@@ -223,3 +223,83 @@ háttértárra.
 Ha a módosítás kulcsmezőt is érint, akkor egy törlést követő beszúrás valósíthatja
 meg egy rekord módosítását.
 ** B*-fák
+Az alapgondolat az, hogy az indexállományban való keresést meggyorsíthatjuk, ha
+az indexállományhoz is (ritka) indexet készítünk hasonló szabályok szerint.Az
+eljárás mindaddig folytatható, ameddig az utolsó index egyetlen blokkba be nem
+fér.A legalsó szint mutatói az adatállomány egy-egy blokkjára mutatnak, a
+fölötte levő szintek mutatói pedig az indexállomány egy-egy részfáját
+azonosítják.
+*** Keresés
+Hasonló az egyszintű ritka indexek esetéhez,azomban ebben az esetben több
+lépésben kell elvégeznünk a keresést:
+
+A fa (azaz az indexállomány) gyökeréből indulunk. Ebben a blokkban megkeressük
+azt a rekordot.amely kulcsa a legnagyobb azok közül,amelyek kisebbek még a
+keresett kulcsnál(vagy egyenlő). Ez a rekord a mutatója a fa egy alsóbb
+szintjére vezet. Ha az előző lépéseket addig ismételjük, amíg meg nem találjuk a
+keresett rekordot.
+*** Beszúrás
+Az eljárás nagy mértékben megyegyezik a ritka indexbe beszúrással, viszont
+ügyelni kell arra is, hogy a fa kiegyenlítettsége ne károsodjon. Ez azt is
+igényelhetni, hogy az index állomány minden szintjén néhány blokk megváltozzon.
+
+*** Törlés
+Megkeressük a kívánt adatot és töröljük. Az adatblokkokat lehetőség szerint
+összevonjuk. Összevonáskor, vagy ha egy adatblokk utolsó rekordját is töröltük,
+a megszűnt blokkhoz tartozó kulcsot is ki kell venni az indexállomány érintett
+részfájából. Ehhez adott esetben a fa minden szintjén szükség lehet néhány blokk
+módosítására.
+*** Módósítás
+Megegyezik a ritka index beli módosítás elvével.
+
+* Sűrű indexek, előnyök és hátrányok
+
+Minden adatrekordhoz tartozik egy index rekord. Ez általában még mindig a
+rekodot tartalamzó blokkra mutat,de elképzelhető az is, hogy közvetlenül az
+adatrekordra mutat. Emiatt az adatokat nem kell rendezni. Ez nagy előny a ritka
+indexel szemben, hiszen ez nagyban megnehezítette a beillesztést.
+
+Fontos megjegyezni azomban, hogy a sűrű indexelés önmagában nem
+állományszervezési módszer. Hash vagy ritka indexre építhet.
+
+A sűrű indexnek hátrányai is vannak.  Ezek közé tartozik a nagyobb hely igény (a
+plusz indexelés miatt), az egyel több indirekció a rekord eléréséhez és több
+adminisztrációval is jár.
+
+Viszont támogatja a több kulcs szerinti keresést és az adatállomány rekordjai
+szabadokká tehetők, ha minden további rekordhivatkozást a sűrű indexen keresztül
+történik.
+** Műveletek sűrűindexel
+*** Keresés
+Az indexállományban megkeressük a kulcsot, pl. bináris kereséssel. A hozzá
+tartozó mutatóval elérhetjük a tárolt rekordot.
+*** Törkés
+Először megkeressük a törlendő rekordot. A hozzátartozó törölt bitet szabadra
+állítjuk,majd a kulcsot kivesszük az indexállományból, és az indexállományt
+időnként tömörítjük.
+*** Beszúrás
+Keresünk egy szabad helyet a tárolandó rekordnak. Ha nem találunk akkor az
+állomány végére vesszük föl. A kulcsot és a tárolásm helyére hivetkozó mutatót a
+kulcs szerint berendezzük az indexállományba.
+*** Módosítás
+Sűrű indexelés esetén a módosítás viszonylag egyszerű: megkeressük a módosítandó
+rekordot tartalmazó adatblokkot, majd a módosított tartalommal visszaírjuk a
+háttértárra. Ha a módosítás kulcsmezőt is érintett, akkor az indexállományt
+újrarendezzük.
+
+
+* Változó hosszúságú rekordok kezelése
+** Változó hosszú ságú rekordok oka
+- Egy mező hossza változó
+- Ismétlődő mező(csoport) van a rekordban
+** Megoldások
+*** Általános megoldás
+Egy rekord változó hosszúságú részeit a rekord mezőlistájának a végén helyezzük
+el. Így a rekord eleje fix hosszúságú marad.
+*** Megoldás változó hosszúságú mezőre
+Gyakrori megoldás az,hogy a mező helyére egy fix hosszúságú mutatót rakunk,ahol
+a mező tényleges tartalma van. Így egy állomány csak egy féle rekordot tartalmaz.
+*** Megoldás ismétlődő mezőkre
+Erre több megoldás is létezik:
+- A maximális számú ismétlődésnek elegendő helyet foglalunk le minden rekordnak
+- Mutatók használata
