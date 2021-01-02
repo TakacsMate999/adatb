@@ -325,7 +325,7 @@ a $*$ pedig a konkatonáció (összefűzés) jele.
 Az ismert mezők értékei alapján meghatározhatjuk az $N$ hosszúságú bitmintának az
 ismert darabjait. Mindenazon vödröket kell megnézni amelyeknek a sorszáma
 illeszkedik a kapott bitmintára.
-* TODO Több kulcs szerinti keresés támogatása
+* Több kulcs szerinti keresés támogatása
 Fontos, hogy egy adatbáziskezelő ne csak elsődleges kulcs szerint tudjon
 keresni, hanem egyéb mezők alapján is. Ezeket a mezőket keresési kulcsoknak
 nevezzük.
