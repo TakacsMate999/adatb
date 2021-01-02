@@ -1,5 +1,7 @@
 #+TITLE: Adatbázisok tételek
 #+AUTHOR: Toldi Balázs Ádám
+#+OPTIONS: H:5
+#+LaTeX_HEADER: \setcounter{secnumdepth}{5}
 
 * Adat, információ, tudás. Metaadatok. Strukturált, szemistrukturált és nem strukturált adatok
 ** Adat 
@@ -112,8 +114,6 @@ másolatot készíteni az adatbázisról. Ha az adatbázis megsérül, ez a más
 teszi lehetővé a visszaállítást a mentés időpontjának állapotába.
 **** DBMS tervező/programozó (DBMS designer/programmer)
 Tudja, hogyan kell DBMS-t készíteni, ami különösen specializált tudást igényel.
-
-
 * Heap szervezés
 ** Általános jellemzői
 Jelentése halmaz, kupac. Ez a legegyszerűbb tárolási megoldás. Legalább annyi
@@ -325,7 +325,7 @@ a $*$ pedig a konkatonáció (összefűzés) jele.
 Az ismert mezők értékei alapján meghatározhatjuk az $N$ hosszúságú bitmintának az
 ismert darabjait. Mindenazon vödröket kell megnézni amelyeknek a sorszáma
 illeszkedik a kapott bitmintára.
-* Több kulcs szerinti keresés támogatása
+* TODO Több kulcs szerinti keresés támogatása
 Fontos, hogy egy adatbáziskezelő ne csak elsődleges kulcs szerint tudjon
 keresni, hanem egyéb mezők alapján is. Ezeket a mezőket keresési kulcsoknak
 nevezzük.
@@ -351,3 +351,112 @@ mezőkhöz) tartozó invertált állományt kell frissíteni.
 
 A [[masodik]]. lehetőségben az adatállomány rekordjai szabadok lehetnek, viszont nem
 ismerjük a keresett rekord címét.
+* Adatmodellek, modellezés 
+Amikor egy adatbázist létrehozunk a cél az, hogy egy kiválasztott valós dologról
+úgy tároljunk adatokat, hogy utána később ugyanarról a dologról információt
+tudjuknk kinyerni. A legtöbb esetben nem tudunk minden adatot eltárlni egy adott
+témakörrel kapcsolatban, ezért csak az adatok egy részét tároljuk. Az eltárolni
+kívánt adatokat klasszikus modellezési eszközökkel választjuk ki: a fontos
+információkat megtartjuk, a kevésbé fontosakat elhanyagoljuk.
+
+** Adatmodell két része
+   1. formalizált jelölésrendszer adatok, adatkapcsolatok leírására
+   2. műveletek az adatokon
+** Adatmodellek osztályozása
+A felhasználó számára az adatbázis egyik legfontosabb jellemzője az a forma,
+amelyben a tárolt adatok közötti összefüggések ábrázolva vannak. Mivel egy
+adatbázis struktúráját jelentős részben a rekordtípusok közötti kapcsolatok
+határozzák meg, ezért az adatmodelleket aszerint osztályozzuk, hogy a
+felhasználó szempontjából miként valósul meg az adatok közötti kapcsolatok
+ábrázolása.
+
+** Adatmodellek
+- Hálos adatmodell
+- Relációs adatmodell
+- Objektumorientált adatmodell
+* Az E-R modell és elemei
+Az egyed kapcsolat (entity-relationship; ER) modell nem tekinthető
+adatmodellnek, hiszen nem definiál műveleteket az adatokon.
+** ER modell elemei
+- egyedtípusok
+- attribútumtípusok
+- kapcsolattípusok
+*** Entitások(egyedek)
+A valós világban létező, logikai vagy fizikai szempontból saját léttel
+rendelkező dolog, amelyről adatokat tárolunk.
+*** Tulajdonságok(property)
+Az etitásokat jellemzi; ezeken keresztül különböztethetőek meg az entitások.
+*** Egyedhalmaz
+Azonos attribútumokkal rendelkező egyedek összessége.
+*** Kapcsolatok
+Entitások névvel ellátott viszonya.
+**** Egy-egy kapcsolat
+Olyan (bináris) kapcsolat, amelyben a résztvevő entitáshalmazok példányaival egy
+másik entitáshalmaznak legfeljebb egy példánya lehet kapcsolatban.
+**** Több-egy kapcsolat
+Egy =K : E1, E2= kapcsolat több-egy, ha =E1= példányaihoz legfeljebb egy =E2=-beli példány tartozhat,
+viszont =E2= példányai tetszőleges számú =E1=-beli példányhoz tartoznak.
+**** Több-több kapcsolat
+Egy =K : E1, E2= kapcsolat több-több, ha =E1= példányaihoz is tetszőleges számú =E2=-beli példány
+tartozhat, és =E2= példányaihoz is tetszőleges számú =E1=-beli példány
+tartozhat.
+*** Kulcs
+Az ER-modellezésben az attribútumok azt a halmazát, amely egyértelműen azonosít
+egy entitás példányait, kulcsnak nevezzük.
+* Az E-R diagram, ISA kapcsolatok, gyenge egyedhalmazok
+** ER-diagram
+Az ER modell egy grafikus megjelenítése az ER diagram.
+*** ER-diagram elemei
+| ER modell elem | Alakzat  |
+|----------------+----------|
+| Egyedhalmaz    | Téglalap |
+| Attribútum     | Elipszis |
+| Kapcsolat      | Rombusz  |
+
+Az aláhúzott attribútumok az adott eygedhalmaz kulcsait jelenti.
+** ISA kapcsolat
+Gyakori az a modellezési szituáció, amikor egy entitáshalmaz minden eleme
+rendelkezik egy másik (általánosabb) entitáshalmaz attribútumaival, de azokon
+kívül még továbbiakkal is (specializáció). Ez a viszony a kapcsolatok egy
+sajátos típusával, az ún. „isa” kapcsolattal írható le. Az objektumorientált
+modelleknél kitüntetett szerepe van.
+
+** Gyenge egyedhalmaz
+Gyakran előfordul, hogy egy entitáshalmaznak nem tudunk kulcsot kijelölni,
+ehelyett az egyedek azonosításához valamely kapcsolódó egyed(ek)re is szükség
+van. Ebben az esetben gyenge egyedhalmazokról beszélünk. Az identitását egy
+tulajdonos egyedhalmaz (owner entity set) biztosítja,amely a gyenge
+egyedhalmazzaltöbb-egy kapcsolatban áll. Az ilyen kapcsolat neve: determináló
+kapcsolat.
+
+* A relációs adatmodell: adatok strukturálása és műveletek
+
+** Struktúrája
+A relációs adatmodell alapját, ahogyan a neve is árulkodik róla, relációk
+alkotják.
+
+*** Reláció
+Halamzok Decartes szorzatának részhalmaza.
+
+A halmazokban található értékek egy-egy ún. tartományból (domain) kerülnek ki.
+
+Fontos megjegyezni, hogy alapvetően a relációban tárolt elemek sorrendjének
+nincs jelentősége.Sőt az attribútumok nevének sincs jelentősége a modelre
+nézve, de egy adatbázis akkor jó, ha  információt tudunk kinyerni belőle. Ehhez
+viszont szükséges az, hogy az egyes relációk, attribútumok valamilyen, a modell
+szempontjából értelmezhető információval rendelkezzen.
+*** Relációs séma
+A relációban tárolható attribútumok halmaza.
+
+Ha egy adatbázis több relációs sémát is tartalmaz, akkor a relációs sémák
+összességének neve adatbázis séma.
+*** A relációk további jellemzői
+**** A releciók foka
+A relecióban lévő oszlopok (attribútumok) száma.
+**** A releciók számossága
+A relációban található sorok száma
+
+** Műveletek
+A relációs adatmodell a relációkon megengedett műveletek meghatározásával válik
+teljessé. Ezen műveletekből épül fel az ún. relációs algebra (relational algebra).
+
