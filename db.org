@@ -460,3 +460,140 @@ A relációban található sorok száma
 A relációs adatmodell a relációkon megengedett műveletek meghatározásával válik
 teljessé. Ezen műveletekből épül fel az ún. relációs algebra (relational algebra).
 
+* Relációalgebra
+** Egyesítés, Unió
+Az attribútumok száma mindkét relációban ugyanannyinak kell lennie, de az egyes
+attribútumok nevének és értelmezésének nem feltétlenül kell megegyeznie.
+** Különbség
+Ugyanazok a feltételek szükségesek,mint az [[Egyesítés, Unió][egyesítés]] műveleténél.
+*** Metszetképzés
+Nem szükséges külön műveletként felvennünk, hiszen képezhető két különbség
+művelet segítségével:
+\begin{align}
+A\cap B &= A\setminus(A\setminus B)
+\end{align}
+** Decartes szorzat
+Két halmaz dékártszorzatának attribútúmainak száma a két reláció attribútúmainak
+összege, a benne található adatok pedig a relációk összes sorának összes
+kombinációja.
+
+*Jelölése:* $r_1\times r_2$
+** Vetítés, projekció
+Vetítés során a reláció egyes kiválasztott attribútumait megtarjuk, a többit
+pedig töröljük.
+
+*Jelölése:* $\pi_{A,B}(r_1)$
+** Kiválasztás, szelekció
+A kiválasztás művelete alatt, azt értjük, amikor egy részhalmazt képezünk egy
+$r$ relációból, egy meghatározott logikai formula alapján. A formulát a reláció
+összes során kiértékeljük, és csak azokat tesszük bele a részhalmazba, amelyre a
+formula igaz értéket kap.
+
+*Jelölés:* $\sigma_{F}(r)$, ahol az $F$ a kiértékelendő logikai formulát jelöli,
+ vagy másnéven a szelekcós feltételt.
+
+*** A formula elemei
+- Konstansok
+- Reláció attribútumainak azonosítója
+- Aritmetikai összehasonlítók (pl. $<,>,=,\neq,\ldots$)
+- logikai operátorok ($\wedge$ $\vee$ $\neg$)
+** Természetes illesztés (natural join)
+Vegyük két olyan relációt, amelyeknek van legalább egy azonos nevű
+attribútumok. Ekkor természetes illesztés alatt azt a műveletet érjük, amikor a
+két reláció összes elemét összefűzzük (Decartes szorzat), majd azokat a sorokat választjuk
+ki, amelyekben a megegyező nevű attribútumok megegyező értéket tartalmaznak.
+
+*Jelölés:* 
+\begin{align}
+r\Join s &= \pi_{R\cup S}\sigma_{(r.X_1=s.X_1)\wedge\ldots\wedge(r.X_n=s.X_n)}(r\times s)
+\end{align}
+
+** $\Theta\text{-illesztés}$
+Legyen $r$ és $s$ két reláció, $\Theta$ pedig egy kvantormentes feltétel, melyet az $r$ és $s$
+relációk egy-egy attribútuma között definiálunk. A táblák Descartes-szorzatából
+a rekordpáron értelmezett Θ feltétel szerint választunk ki sorokat: $t =
+\sigma_\Theta(r\times s)$.
+
+*Jelölése:* $r \underset{\Theta}{\Join} s$
+** Hányados
+Jelölje $r \div s$ azt a relációt, amelyre igaz az, hogy az $s\text{-sel}$ alkotott Descartes-szorzata
+a lehető legbővebb részhalmaza $r\text{-nek}$ : $(r \div s) \setminus s \subseteq r$
+* Sorkalkulus, oszlopkalkulus
+** Sorkalkulus
+*** Fogalma
+A relációs sorkalkulus egy elsőrendű nyelv, amely kvantorokat is tartalmazhat és
+a kvantorok sorvektor változókat kvantifikálhatnak.
+*** Felépítése
+A nyelv szimbólumból atomokat épít fel, amelyek formulákká rakhatók össze, a
+formulák pedig egy kifejezéssé építhetők, amelyek segítségével relációk írhatók le.
+*** Szimbolumai
+- Zárójelek: (,)
+- Aritmetikai relációk $<,>,=,\neq,m,\leq,\geq$
+- logikai műveletek $\vee,\wedge,\neg$
+- Sorváltozók: $s^{(n)}$, $n$ változós
+- sorváltozók komponensei: $s^{(n)}[i]$,ahol $1\leq i \leq n$
+- (konstans) relációk: $R^{(m)}$, $m$ változós
+- konstansok
+- kantorok: $\exists,\nexists,\forall$
+*** Atomok felépítése
+- $R^{(m)}(s^{(m)})$
+- $s^{(n)[i]\Theta u^{(k)[j]$, ahol $1\leq i \leq n$, $1\leq j \leq k$ és
+  $\Theta$ aritmetikai relációsjel
+- $s^{(n)[i]\Theta c$
+- $R^{(m)}(c_1,c_2,\ldots,c_n)$
+*** Formulák felépítése
+- minden atom formula
+- Ha $\Psi_1$ és $\Psi_2$ formuál, akkor $\Psi_1\vee\Psi_2$,
+  $\Psi_1\vedge\Psi_2$ és $\neg\Psi_1$ is formulák
+- Ha $\Psi$ formula és $s^{(n)}$ egy szabad sorváltozója, akkor $(\exists
+  s^{(n))\Psi$ és  $(\forall s^{(n))\Psi$ is formulák, amelyben $s^{(n))$ már
+  kötött sorváltozó
+*** Kifejezések felépítése
+\begin{align*}
+\big\{s^{(m)}\big|\Psi(s^{(m)}\big\}
+\end{align*}
+ahol $\Psi$ olyan formula, amelynek $s^{(m)$ az egyetlen szabad sorváltozója.
+*** Tétel
+Minden, az $R_k^{(f_k)}\subseteq A^{f_k}$, ($k=1,2,\ldots,r$) relációból
+felépített relációs algebrai kifejezéshez van olyan $\Psi(s^{(m)})$ sorkalkulus
+formula, hogy $\Psi$ csak az $R_k^{(f_k}\text{-k}$ közül tartalmaz relációkat és
+az $E$ kifejezés megegyezik az $\big\{s^{(m)}\big|\Psi(s^{(m)}\big\}$ kifejezéssel.
+** Oszlopkalkulus
+Az oszlopkalkulus elsősorban abban különbözik a sorkalkulustól, hogy sorváltozók
+helyet egyszerű változók szerepelnek benne. Ennek köszönhetően egy kicsivel
+egyszerűbb kifejezni vele bizonyos lekérdezéseket.
+*** Szimbólumai
+- \ldots
+- oszlopbáltozók: $u_i$
+- \ldots
+*** Atomok felépítése
+- $R^{(m)}(x_1,x_2,\ldots,x_m)$, ahol $x_1,x_2,\ldots,x_m$ konstansok vagy oszlopváltozók.
+- $x\Theta y$, ahol $x$ és $y$ konstansok vagy oszlopváltozók és $\Theta$
+  aritmetikai relációjel.
+- $\ldots$
+*** Formulá felépítése
+- $\ldots$
+*** Kifejezések felépítése
+\begin{align*}
+\big\{x_1,x_2,\ldots,x_m\big|\Psi(x_1,x_2,\ldots,x_m)\big\}
+\end{align*}
+ahol $\Psi$ olyan formula, amelyek szabad változói csak $x_1,x_2,\ldots,x_m$
+*** Tétel
+Rögzített $A$ interpretációs halmaz és $R_k^{(n_k)}\subseteq A^{n_k}$ reációk
+esetén a sorkalkulus bármely kifejezéséhez létezik az oszlopkalkulusnak olyan
+kifejezése,amely az előzővel azonos relációt határoz meg.
+* Biztonságos sorkalkulus
+A biztonságos sorkalkulus célja az, hogy a sorkalkulus kifejezések
+kiértékelhetőek legyenek számítógépen kezelhető méretű relációko/véges idő
+mellett is.
+** Formula doménje
+$\text{DOM}\Psi\equiv\{\Psi\text{-beli alaprelációk összes attribútumának
+értékeik}\}\cup\{\Psi\text{-ben előforduló konstansok}\}$
+** Biztonságos kifejezés
+$\{t|\Psi(t)\}$ biztosnágos, ha
+ 1) minden $\Psi(t)$-t kielégítő $t$ minden komponense 
+ 2) $\Psi\text{-nek}$ miden $(\exists u)\omega(u)$ alakú részformulájára
+    teljesül, hogy ha $u$ lielégíti $\omega\text{-t}$ szabad változók valamelym
+    értéke mellett, akkor  $u$ minden komponense $\text{DOM}(\omega)\text{-beli}$
+** Tétel
+A relációs algebra és abiztonságos sorkalkulus kifejezőereje ekvivalens.
