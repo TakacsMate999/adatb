@@ -798,3 +798,66 @@ Költsége: $b_r+n_r\cdot c$, ahol $c$ a szelekció költsége.
 - Különbség(mindkét relációt rendezzük, fésülésnél csak az első relációbeli
   rekordokat hagyjuk)
 - Aggregáció
+* Materializáció és pipelining
+** Materializáció
+Ebben a módszerben az összetett kifejezésnek egyszerre egy műveletét hajtjuk
+végre, valamilyen rögzített sorrendben. Ehhez most is egy relációs algebrai fába
+foglaljuk a műveleteket, majd a levelektől (azaz a relációktól) indulva mindig azt
+a műveletet értékeljük ki, amelyik műveletnek éppen van rendelkezésre álló bemenete.
+** Pipelining
+Itt egyszerre több elemi műveletet szimultán kiértékelése folyik, egy operáció
+eredményét azonnal megkapja a sorban következő operáció operandusaként. 
+
+Ez persze nem minden esetben működik, pl rendezés esetében.
+* Kiértékeliési terv kiválasztása
+Az egyes műveletekre több féle algoritmust, metódust is megvizsgáltunk és közel
+sem triviális ezek kiválasztása. Tudnunk kell, hogy:
+- Milyen műveleteket
+- Milyen sorrendben
+- Minlyen algoritmus szerint
+- és milyen workflow-ban értékeljük ki.
+
+** Költség alapú optimalizáció
+Nem jó ötlet az összes ekvivalens kifejezést felsorolni, kiértékelni, majd a
+legjobbat kiválasztani. Ennek az az oka,hogy ezzel től sok lehetőséget kell
+megvizsgálni. Ezért egy jobb megoldást biztosíthat a heurisztikus költségalapú
+optimalizálás.
+
+** 
+* Relációs adatbázis sémák tervezése E-R diagramból
+Egy ER-diagram megtervezése után fontos lehet, hogy a megtervezett modellt
+relációs adatmodellbe transzformáljuk, ezzel működőképessé téve. Ehhez
+transzformációt végzünk.
+** Transzformáció
+1. Az egyedhalmazokat olyan relációs sémában ábrázoljuk, amely tartalmazza az
+   entitáshalmaz összes attribútumát. Ha van olyan egyedhalmaz, amely "isa"
+   kapcsolatban van egy másik egyedhalmazzal, akkor a specializált
+   egyedhalmazhoz redelt relációs sémába az általánosabb egyedhalmaz
+   attributumait is fel kell venni.
+2. A kapcsolattípusokat olyan sémákká alakítjuk, amelyek attribútumai
+   tartalmazzák a kapcsolatban szereplő összes reláció kulcsait is.
+
+Ezen kívül számos más lehetőség van a kapcsolatok létrehozására, amelyek adott
+esetben jobbak is lehetnek. Ilyen pl. az indegen kulcsos megoldás.
+* Anomáliák (módosítási,  törlési, beszúrási)
+A redundáns relációknak megfelelő adattárolással kapcsolatban egy sor
+kellemetlen jelenség fordulhat elő. Ezeket hagyományosan anomáliáknak nevezik.
+** Módosítási anomália
+Ha egy adatot több helyen tárolunk és módosítani szeretnénk, akkor minden helyen
+meg kell azt változtatni. Ha ezt elmulasztjuk, akkor különböző helyekeről
+különböző információt kapnánk. Az ilyen szituációk nem csak többletmunkát, hanem
+logikai ellentmondásokat is jelenthet. 
+** Beszúrási anomália
+Ennek alapja, hogy nem tudunk rekordot felvenni, ha van olyan adat, ami nem
+ismert és a tárolandó adattal megahtározott kapcsolatban áll.
+
+Példa: egy új szálítót nem tudunk felvenni, ha még nem szálított semmit.
+** Törlési anomália
+Ha csak egy attribútum értékét akarjuk törölni akkor előfordulhat,hogy ez csak
+az egész sor törlésével lehetséges (pl. ha az adott attribútom  része valamely
+kulcsnak). Ezzel viszont olyan információt is törölnénk, amire még szükség
+lehet.
+
+
+Erre egy megoldás lehet a relációk függőleges felbontása,de ez nem minden
+esetben alkalmazható.
