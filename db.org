@@ -472,7 +472,7 @@ művelet segítségével:
 \begin{align}
 A\cap B &= A\setminus(A\setminus B)
 \end{align}
-** Decartes szorzat
+** Descartes szorzat
 Két halmaz dékártszorzatának attribútúmainak száma a két reláció attribútúmainak
 összege, a benne található adatok pedig a relációk összes sorának összes
 kombinációja.
@@ -500,7 +500,7 @@ formula igaz értéket kap.
 ** Természetes illesztés (natural join)
 Vegyük két olyan relációt, amelyeknek van legalább egy azonos nevű
 attribútumok. Ekkor természetes illesztés alatt azt a műveletet érjük, amikor a
-két reláció összes elemét összefűzzük (Decartes szorzat), majd azokat a sorokat választjuk
+két reláció összes elemét összefűzzük (Descartes szorzat), majd azokat a sorokat választjuk
 ki, amelyekben a megegyező nevű attribútumok megegyező értéket tartalmaznak.
 
 *Jelölés:* 
@@ -597,3 +597,204 @@ $\{t|\Psi(t)\}$ biztosnágos, ha
     értéke mellett, akkor  $u$ minden komponense $\text{DOM}(\omega)\text{-beli}$
 ** Tétel
 A relációs algebra és abiztonságos sorkalkulus kifejezőereje ekvivalens.
+* Relációs lekérdezések heurisztikus optimalizálása
+A heurisztikus optimalizálás során, relációs algebrai műveletekből egy fát
+építünk. Ezt felhasználva próbáljuk a műveletek sorrendjét és felépítését
+módosítani, hogy kiválasszuk a leggyorsabb, még a helyes eredményt kapjuk. 
+** Első lépés
+A lekérdezés kanonikus alakjából indulunk ki. Vegyük először a kiválasztott
+relációk Descartes szorzatát, majd hajtsuk végre a szelciót, végül alkalmazzuk a
+kivánt projekciót.
+** Második lépés
+Itt a szelekciós feltételeket próbáljuk meg sülyeszteni. Ehhez fel kell
+használni a relációs algebrai kifejezések ekvivalenciákját. A célja az input
+relációkat, a további műveletekhez szükséges részét redukáljuk le amennyire csak
+lehet.
+** Harmadik lépés
+Ebben a lépésben a fában szereplő leveleket (azaz  relációkat) próbáljuk minnél
+jobb helyre rendezni. Ez akkor hasznos, ha ezzel nagyságrendekkel kisebb
+Descartes szorzatok jönnek létre.
+** Negyedik lépés
+Előfordulhat, hogy a join megegyezik a Descartes-szorzattal. Ha ezt egy
+szelekció követi, akkor vonjuk össze a kettőt egy $\Theta\text{-illesztés}$ műveletté, így
+kevesebb rekordot kell generálni.
+** Ötödik lépés
+Most a vetítéseket fogjuk a fában süllyeszteni, amennyire csak tudjuk. Ehhez új
+vetítéseket is létrehozhatunk, ha szükséges. 
+* Relációalgebraikifejezések transzformációi, ekvivalens kifejezések
+A lekérdezés optimalizáció egy fontos eleme a relációs kifejezések
+transzformációja.  Ehhez különböző ekvivalencia szabályokat alkalmazunk.
+** Ekvivalencia szabályok
+*** Szelekció kaszkádosítása
+\begin{align}
+\sigma_{\theta_1\wedge\theta_2}(E)=\sigma_{\theta_1}(\sigma_{\theta_2}(E))
+\end{align}
+*** Szelekció kommutativitása
+\begin{align}
+\sigma_{\theta_1}(\sigma_{\theta_2}(E))=\sigma_{\theta_2}(\sigma_{\theta_1}(E))
+\end{align}
+*** Szelekció kaszkádosítása
+\begin{align}
+\pi_{L_1}(\pi_{L_2}(\ldots\pi_{L_n}(E)\ldots))=\pi_{L_1}(E)
+\end{align}
+*** A $\Theta\text{-illesztés}$  és a Descartes-szorzat kapcsolata
+\begin{align}
+\sigma_\theta(E_1\times E_2) &= E_1\underset{\theta}{\Join}E_2 \\
+\sigma_\theta_1(E_1\underset{\theta_2}{\Join}E_2) &= E_1\underset{\theta_1\wedge\theta_2}{\Join}E_2
+\end{align}
+*** Természetes illesztés asszociativitása
+\begin{align}
+(E_1\Join E_2)\Join E_3= E_1 \Join (E_2\Join E_3)
+\end{align}
+*** Szelekció és projekció kapcsolata
+\begin{align}
+\pi_{A_1,A_2,\ldots,A_n}(\sigma_c(r)) &= \sigma_c(\pi_{A_1,A_2,\ldots,A_n}(r))
+\end{align}
+*** Halmazműveletek kommutatívak
+Valóban.
+*** Demorgen azonosságok
+Itt is alkalmazhatóak.
+*** STB
+Ennél jóval több van. Csak egy pár fontosabbat soraltam itt fel. 
+* Relációs lekérdezések költségbecslés alapú optimalizálása
+Ez egy jóval kifinomultabb metódus. Egy költség függvényt definiálunk, és ezek
+után azt a végrehajtási tervet alkalmazzuk, amelyre ez a fügvény a legkisebb
+értéket adta.
+** Katalógusadatok
+A költségbecslést segítő metaadatokat katalógus adatoknak nevezzük. Ilyen adat
+például a rekordok/blokkok száma, a relációhoz tartozó indexek, egyes
+lekérdezések költsége
+*** Költsége
+Ezeket az adatokat folyamatosan frissíteni kell. Ez bizonyos esetekben igencsak
+költséges lehet, jól meg kell gondolni, hogy ezt mikor teszük meg. 
+** Költség meghatározása
+A költségek meghatározása elsősorban a blokkműveletek számára szoktunk
+optimalizálni,hiszen ez független a rendszer terhelésétől, valamint ennek a
+műveletnek általában nagyságrendekkel nagyobb az idő igénye, mint a processzor
+és memória műveleteknek.
+ Ez viszont egyáltalán nem mondható kizárólagosnak, több
+szempontot  is érdemes figyelembe venni.
+*Jelölése:*
+\begin{align}
+E_{\text{alg.}}=\text{Az algoritmus becsült költsége (estimate)}
+\end{align}
+* Katalógusban tárolt információk
+A katalógus adatai fontos szerepet játszanak a lekérdezés optimalizációban. Ezek
+segítségével lehet megbecsülni az egyes lekérdezések költségét.
+** Általános információk
+
+- $n_r$ : az $r$ relációban levő rekordok (elemek) száma (number)
+- $b_r$ : az $r$ relációban levő rekordokat tartalmazó blokkok (blocks) száma
+- $s_r$ : az $r$ reláció egy rekordjának nagysága (size) bájtokban
+- $f_r$ : mennyi rekord fér az $r$ reláció egy blokkjába (blocking factor)
+- $V(A, r)$: hány különböző értéke (Values) fordul elő az $A$ attribútumnak az
+  $r$ relációban. 
+  - $V(A, r) = |\pi_A (r)|$
+  - $V(A, r) = n_r$ , ha az A kulcs
+- $SC(A, r)$: azon rekordok várható száma, amelyek kielégítenek egy egyenlőségi
+  feltételt az $A$ attribútumra (Selection Cardinality), feltéve, hogy legalább
+  egy rekord kielégíti ezt az egyenlőségi feltételt.
+  - $SC(A, r) = 1$, ha $A$ egyedi (vagy kulcs)
+  - Általános esetben $SC(A, r) =\frac{n_r}{V(A,r)}$
+- Ha a relációk rekordjai fizikailag együtt vannak tárolva, akkor
+\begin{align}
+b_r&= \left\lceil\frac{n_r}{f_r}\right\rceil
+\end{align}
+** Katalógus információk az indexekről
+- $f_i$ : az átlagos pointer-szám a fa struktúrájú indexek csomópontjaiban, mint pl. a
+B* fáknál, azaz a csomópontokból induló ágak átlagos száma.
+- $HT_i$ : az i index szintjeinek a száma, azaz az index magassága (Height of Tree).
+  - Az r relációt tartalmazó heap-szervezésű állományra épített B* fa esetén $HT_i=\lceil\log_{f_i}{b_r}\rceil$   
+  - hash-állománynál HTi = 1.
+- $LB_i$ : az $i$ index legalsó szintű blokkjainak a száma, azaz a levélszintű
+  indexblokkok száma (Lowest level index Block)
+* A lekérdezés költsége: szelekció, indexelt szelekció, join műveletek és algoritmusok, egyéb műveletek.
+** Szelekciós művelet költségbecslése
+*** Algoritmusok alapján
+- (A1) Lineáris keresés:
+  + költsége: $E_{A1}=b_r$
+- (A2 )Bináris keresés:
+  + Feltétele:
+    - A blokkok folyamatosan helyzkednek el a diszken
+    - Az $A$ attribútum szerinte rendezett
+    - Szelekció feltétele egyenőség
+  + Költsége: $E_{A2}=\lceil\log_2(b_r+1)\rceil+\left\lceil\frac{SC(A,r)}{f_r}\right\rceil-1$
+***  Indexelt szelekciós algoritmusok
+Elsődleges index: segítségével a háttértáron a rekordokat a tényleges fizikai
+sorrendjében tudjuk elérni.
+- (A3) Elsődleges index használatával, egyenlőségi feltételt a kulcson vizsgálva
+  + Költsége $E_{A3}=HT_i+1$
+- (A4) Elsődleges index használatával, egyenlőségi feltétel nem kulcson
+  + Költség: $E_{A4}=HT_i+\left\lceil\frac{SC(A,r)}{f_r}\right\rceil$
+- (A5) Másodlagos index használatával, egyenlőségi feltétel mellett
+  * $E_{A5}=HT_i+1$, ha  $A$ kulcs
+  * $E_{A5}=HT_i+SC(A,r)$, ha $A$ nem kulcs
+*** Összehasonlítási szelekció 
+Most vegyük a $\sigma_{A\leq v}$ alakú szelekciókat.
+- Ha nem is merjük $v$ értékét, akkor átlagosan $\frac{n_r}{2}$ rekordot elégít ki
+- Ha ismerjük és egyenletes eloszlást feltételezünk  akkor átlagosan
+  $n_r\cdot\left(\frac{v-\min{(A,r)}}{\max{(A,r)-\min{(A,r)}}}\right)$
+- (A6) Elsődleges index használatával
+  + $E_{A6}=HT_i+\fract{b_r}{2}$, ha $v$ nem ismert
+  + $E_{A}=HT_i+\left\lceil\frac{c}{f_r}\right\rceil$, ahol $c$ jelöli a
+    rekordok számát és $v$ ismert
+- (A7) Másodlagos index
+  + $E_{A7}=HT_i+\frac{LB_i}{2}+\frac{n_r}{2}$, ha $v$ nem ismert
+** Join műveletek
+*** Típusai
+**** Természetes illesztés
+\begin{align}
+r_1\Join r_2&= \pi_{A\cup B}(\sigma_{R1.X=R2.X}(r_1\times r_2))
+\end{align}
+**** Külső illesztések
+- Bal oldali külső illesztés $r_1*(+)r_2$
+- Jobb oldali külső illesztés $r_1(+)*r_2$
+- Teljse külső illesztés $r_1(+)*(+)r_2$
+**** Theta illesztés
+\begin{align}
+r_1 \Join_\theta r_2 = \sigma_\theta(r_1\times r_2)
+\end{align}
+*** Egymásba ágyazott ciklikus illesztés (Nested loops join)
+Két egymásba ágyazott ciklus használatával hajtja végre a join műveletet:
+ 1) Végig megy az egyik reláció összes rekordján, az ehhez tartozókat fogjuk keresni
+ 2) Végig megy a másik  reláció összes rekordján és menézi,hogy az előző ciklus
+    futó változójához megfelel-e
+Legrosszabb esetben a kölrtsége $b_r+n_r\cdot b_s$,de ha legalább az egyik befér
+a memóriába akkor a költség $b_r+b_s$ lesz.
+*** Blokk alapú egymásba ágyazott ciklikus illesztés(block nested
+loop join)
+Itt négy darab egymásba ágyazott ciklust alkalmazunk:
+ 1) Végig megy az egyik reláció blokkjain
+ 2) Másik reláció blokkaji
+ 3) Első reláció beolvasott blokkjának rekordjai
+ 4) Másik reláció beolvasott blokkjának rekordjai
+
+Ez legrosszabb esetben $b_r+b_r\cdot b_s$ a költsége, de sok memóriával $b_r+b_s$ -re
+le lehet csökkenteni.
+
+*** Indexalapú egymásba ágyazott ciklikus illesztés(Indexed nested-loop join)
+
+Az egyik reláción ($s$) van indexünk. Az első algoritmust írjuk át úgy, hogy a
+belső ciklus indexelt keresést alkalmaz, így a keresés az index alapján kisebb
+költséggel is elvégezhető.
+
+Költsége: $b_r+n_r\cdot c$, ahol $c$ a szelekció költsége.
+
+*** További join implementációk
+- Sorted merge join
+  * A relációk a join feltételben meghatározott attribútumok mentén
+    rendezzük,majd összefűzzük.
+- Hash join
+  * Az egyik relációt hash-táblán keresztül érjük el, miközben a másik reláció
+    egy adott rekordjához illeszekedő rekordokat keressük.
+- Egyéb
+  - pl. bitmap join
+** Egyéb operációk
+- Ismétlődés kiszűrése (rendezés, majd törlés)
+- Projekciók(projekció,majd ismétlődések szűrése)
+- Unió(mindkét relációt rendezzük, majd összefésüléssel kiszűrjük az ismétlődéseket)
+- Metszet (mindkét relációt rendezzük, fésülésnél csak a másodpéldányokat
+  tartjuk meg)
+- Különbség(mindkét relációt rendezzük, fésülésnél csak az első relációbeli
+  rekordokat hagyjuk)
+- Aggregáció
